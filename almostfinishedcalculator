@@ -49,7 +49,13 @@ ui <- navbarPage("Calculadora Financeira",
                                      numericInput("ric0", "Payment", value = -400),
                                      actionButton("rical2", label = "Calculate"),
                                      verbatimTextOutput("ri2")
-                            )
+                            ),
+                            tabPanel("IRR",
+                                     numericInput("co", "CFo", value = -60),
+                                     numericInput("cf", "CFj constante", value = 100),
+                                     numericInput("pow", "Nj", value = 2),
+                                     actionButton("IRR", label = "Calculate"),
+                                     verbatimTextOutput("der")
                  )
 )
 
@@ -64,6 +70,8 @@ server <- function(input, output) {
   vp   <- reactiveValues(doText = NULL)
   vpc  <- reactiveValues(data = NULL)
   nv   <- reactiveValues(data = NULL)
+  irr  <- reactiveValues(data = NULL)
+  
 
   ###########################        Basics      ##############################
   ###########################     Future Value   ##############################
@@ -174,6 +182,60 @@ server <- function(input, output) {
   output$ri2 <- renderText({
     paste(nv$data)
   })
+  
+  ###########################           Intermediary          ##############################
+  ###########################     Internal Rate of Return     ##############################
+  
+  observeEvent(input$IRR, {
+    h <- 1e-9
+    num <- function(n){
+      i <- 0
+      fac <- rep(0, n+1)
+      pv <- rep(0, n+1)
+      
+      g <- function(x){
+        while(i <= n){
+          fac[i+1]<- (1+x)^i
+          if(i>0){
+            pv[i+1]<- input$cf/fac[i+1]
+          } else {
+            pv[i+1] <- input$co
+          }
+          i = i + 1
+        }
+        return(sum(data.frame(pv)))
+      }
+      
+      new.raph <- function(error = 1e-9, x0 = 0, N = 1000){
+        h = 1e-9
+        i = 1
+        x1 = x0
+        p = numeric(N)
+        while (i <= N) {
+          dg.dx = (g(x0 + h) - g(x0))/h
+          x1 = (x0 - (g(x0) / dg.dx))
+          p[i] = x1
+          i = i + 1
+          if (abs(x1 - x0) < error) 
+            break
+            x0 = x1
+        }
+        return(p[1 : (i-1)])
+      }
+      
+      app <- new.raph(x0 = 0)
+      
+      
+    }
+    
+    irr$data <- num(input$pow)
+    
+  })
+  
+  output$der <- renderText({
+    paste(irr$data[length(irr$data)])
+  })
+  
 } 
 
 shinyApp(ui, server)
