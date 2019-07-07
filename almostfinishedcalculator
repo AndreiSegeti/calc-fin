@@ -1,0 +1,327 @@
+library(shiny)
+library(shinythemes)
+##############################################################################################
+## UI #### UI #### UI #### UI #### UI #### UI #### UI #### UI #### UI #### UI #### UI #### UI 
+##############################################################################################
+ui <- navbarPage("Calculadora Financeira",
+                 theme = shinytheme("superhero"),
+                 navbarMenu(div("Basics", class = "text-secondary"),
+                            tabPanel(div("Future Value",
+                                         class= "text-success"),
+                                     wellPanel(
+                                       fluidRow(
+                                         column(
+                                           4,
+                                           numericInput("c11",  label = div("Capital Inicial", 
+                                                                            class = "text-warning"), 
+                                                        value = 100),
+                                           numericInput("jur1", label = div("Taxa de juros ao ano",
+                                                                            class = "text-danger"),
+                                                        value = 0.1),
+                                           numericInput("per1", label = div("Período", 
+                                                                            class = "text-info"),
+                                                        value = 1),
+                                           selectInput("ki1", "Tipo de Juros",
+                                                       list("--","Compostos", "Simples"))
+                                         )
+                                       )
+                                     ),
+                                     verbatimTextOutput("r1")),
+                            tabPanel(div("Juros",
+                                         class ="text-danger"),
+                                     wellPanel(
+                                       fluidRow(
+                                         column(
+                                           4,
+                                           numericInput("c12",  label = div("Capital Inicial", 
+                                                                            class = "text-warning"), 
+                                                        value = 100),
+                                           numericInput("vf2", label = div("Future Value",
+                                                                           class= "text-success"),
+                                                        value = 110),
+                                           numericInput("per2", label = div("Período", 
+                                                                            class = "text-info"),
+                                                        value = 1),
+                                           selectInput("ki2", "Tipo de Juros",
+                                                       list("--","Compostos", "Simples"))
+                                           
+                                         )
+                                       )
+                                     ),
+                                     verbatimTextOutput("r2")
+                            ),
+                            tabPanel(div("Período", 
+                                         class = "text-info"),
+                                     wellPanel(
+                                       fluidRow(
+                                         column(
+                                           4,
+                                           numericInput("c13",  label = div("Capital Inicial", 
+                                                                            class = "text-warning"), 
+                                                        value = 100),
+                                           numericInput("vf3", label = div("Future Value",
+                                                                           class= "text-success"),
+                                                        value = 110),
+                                           numericInput("jur3", label = div("Taxa de juros ao ano",
+                                                                            class = "text-danger"),
+                                                        value = 0.1),
+                                           selectInput("ki3", "Tipo de Juros",
+                                                       list("--","Compostos", "Simples")
+                                           )
+                                         )
+                                       )
+                                     ),
+                                     verbatimTextOutput("r3")),
+                            tabPanel(div("Capital Inicial", 
+                                         class = "text-warning"),
+                                     wellPanel(
+                                       fluidRow(
+                                         column(
+                                           4,
+                                           numericInput("vf4", label = div("Future Value",
+                                                                           class= "text-success"),
+                                                        value = 110),
+                                           numericInput("jur4", label = div("Taxa de juros ao ano",
+                                                                            class ="text-danger"), 
+                                                        value = 0.1),
+                                           numericInput("per4", label = div("Período", 
+                                                                            class = "text-info"),
+                                                        value = 1),
+                                           selectInput("ki4", "Tipo de Juros",
+                                                       list("--","Compostos", "Simples")
+                                           )
+                                         )
+                                       )
+                                       
+                                     ),
+                                     verbatimTextOutput("r4"))
+                 ),
+                 navbarMenu(div("Advanced",class="text-danger"), 
+                            tabPanel(div("Present Value with Cash Flow", 
+                                         class = "text-warning"),
+                                     numericInput("ricf", label = div("Constant Cash Flow",
+                                                                      class= "text-success"), 
+                                                                      value = 100),
+                                     numericInput("rin", label = div("Number of entries", 
+                                                                     class = "text-info"), value = 5),
+                                     numericInput("rij", label = div("Interest",
+                                                                     class ="text-secondary"),
+                                                  value = 0.1),
+                                     actionButton("rical1", label = "Calculate"),
+                                     verbatimTextOutput("ri1")
+                            ),
+                            tabPanel(div("NPV",
+                                         class= "text-success"),
+                                     numericInput("ricf2", label = div("Constant Cash Flow",
+                                                                       class= "text-success"),
+                                                  value = 100),
+                                     numericInput("rin2", label = div("Number of entries", 
+                                                                      class = "text-info"),  
+                                                  value = 5),
+                                     numericInput("ric0", label = div("Payment",
+                                                                      class ="text-danger"), 
+                                                  value = -400),
+                                     numericInput("rij2", label = div("Interest",
+                                                                      class ="text-secondary"),
+                                                  value = 0.1),
+                                     actionButton("rical2", label = "Calculate"),
+                                     verbatimTextOutput("ri2")
+                            ),
+                            tabPanel(div("IRR",
+                                         class ="text-secondary"),
+                                     numericInput("co", label = div("CFo",
+                                                                    class ="text-danger"),
+                                                  value = -60),
+                                     numericInput("cf", label = div("Constant Cash Flow",
+                                                                    class= "text-success"),
+                                                  value = 100),
+                                     numericInput("pow", label = div("Number of entries", 
+                                                                     class = "text-info"),
+                                                  value = 2),
+                                     actionButton("IRR", label = "Calculate"),
+                                     verbatimTextOutput("der")
+                            )
+                 )
+)
+
+##############################################################################################
+#### S #### S #### S #### S #### S #### S #### S #### S #### S #### S #### S #### S #### S ### 
+##############################################################################################
+
+server <- function(input, output) {
+  vf   <- reactiveValues(doText = NULL)
+  j    <- reactiveValues(doText = NULL)
+  p    <- reactiveValues(doText = NULL)
+  vp   <- reactiveValues(doText = NULL)
+  vpc  <- reactiveValues(data = NULL)
+  nv   <- reactiveValues(data = NULL)
+  irr  <- reactiveValues(data = NULL)
+  
+  ###########################        Basics      ##############################
+  ###########################     Future Value   ##############################
+  
+  observeEvent(input$ki1, {
+    vf$doText <- input$ki1
+  })
+  
+  output$r1 <- renderText({
+    if (vf$doText == FALSE) return()
+    isolate({
+      data <-
+        if(input$ki1 == "Compostos"){
+          vf$data <- paste("Valor Futuro:", (input$c11)*(1 + (input$jur1))^(input$per1))
+        } else {
+          vf$data <- paste("Valor Futuro:", (input$c11) + (input$c11)*(input$jur1)*(input$per1))
+        }
+    })
+  })
+  
+  ###########################     Basics     ##############################
+  ###########################     Juros      ##############################
+  
+  observeEvent(input$ki2, {
+    j$doText <- input$ki2
+  })
+  
+  output$r2 <- renderText({
+    if (j$doText == FALSE) return()
+    isolate({
+      data <-
+        if(input$ki2 == "Compostos"){
+          j$data <- paste("Juros:", (input$vf2/input$c12)^(1/input$per2) - 1)
+        } else {
+          j$data <- paste("Juros:", ((input$vf2 - input$c12)/input$c12)/input$per2)
+        }
+    })
+  })
+  
+  ###########################     Basics    ##############################
+  ###########################    Período    ##############################
+  
+  observeEvent(input$ki3, {
+    p$doText <- input$ki3
+  })
+  
+  output$r3 <- renderText({
+    if (p$doText == FALSE) return()
+    isolate({
+      data <-
+        if(input$ki3 == "Compostos"){
+          p$data <- paste("Período:", log(input$vf3/input$c13)/log(1+input$jur3))
+        } else {
+          p$data <- paste("Período:", (input$vf3 - input$c13)/(input$jur3*input$c13))
+        }
+    })
+  })
+  
+  ###########################        Basics       ##############################
+  ###########################    Present Value    ##############################
+  
+  observeEvent(input$ki4, {
+    vp$doText <- input$ki4
+  })
+  
+  output$r4 <- renderText({
+    if (vp$doText == FALSE) return()
+    isolate({
+      data <-
+        if(input$ki4 == "Compostos"){
+          vp$data <- paste("Valor Presente:", input$vf4/((1+input$jur4)^input$per4))
+        } else {
+          vp$data <- paste("Valor Presente:", (input$vf4/(1 + (input$jur4)*(input$per4))))
+        }
+    })
+  })
+  
+  ###########################        Intermediary       ##############################
+  ###########################       Present Value CF    ##############################
+  
+  observeEvent(input$rical1, {
+    dis.fac <- (1 + input$rij)
+    vet.dis.fac <- rep(0, input$rin)
+    cash <- rep(input$ricf, input$rin)
+    for (i in 1:input$rin){
+      vet.dis.fac[i] <- (dis.fac)^i
+    }
+    vpc$data <- sum(data.frame(cash/vet.dis.fac))  
+  })
+  
+  output$ri1 <- renderText({
+    paste(vpc$data)
+  })
+  
+  ###########################        Intermediary       ##############################
+  ###########################     NET Present Value     ##############################
+  
+  observeEvent(input$rical2, {
+    dis.fac <- (1 + input$rij2)
+    vet.dis.fac <- rep(0, input$rin2)
+    cash <- rep(input$ricf2, input$rin2)
+    for (i in 1:input$rin2){
+      vet.dis.fac[i] <- (dis.fac)^i
+    }
+    nv$data <- (input$ric0 + sum(data.frame(cash/vet.dis.fac)))
+  })
+  
+  output$ri2 <- renderText({
+    paste(nv$data)
+  })
+  
+  ###########################           Intermediary          ##############################
+  ###########################     Internal Rate of Return     ##############################
+  
+
+  observeEvent(input$IRR, {
+    h <- 1e-9
+    num <- function(n){
+      i <- 0
+      fac <- rep(0, n+1)
+      pv <- rep(0, n+1)
+      
+      g <- function(x){
+        while(i <= n){
+          fac[i+1]<- (1+x)^i
+          if(i>0){
+            pv[i+1]<- input$cf/fac[i+1]
+          } else {
+            pv[i+1] <- input$co
+          }
+          i = i + 1
+        }
+        return(sum(data.frame(pv)))
+      }
+      
+      new.raph <- function(error = 1e-9, x0 = 0, rep.t = 1000){
+        h = 1e-9
+        i = 1
+        rp = rep(0, rep.t)
+        x1 = x0
+        while (i <= rep.t) {
+          dg.dx = (g(x0 + h) - g(x0))/h
+          x1 = (x0 - (g(x0) / dg.dx))
+          rp[i] = x1
+          i = i + 1
+          if (abs(x1 - x0) < error) 
+            break
+          x0 = x1
+        }
+        return(rp[1 : (i-1)])
+      }
+      
+      data <- new.raph(x0 = 0)
+      
+      
+    }
+    
+    irr$data <- num(input$pow)
+    
+  })
+  
+  output$der <- renderText({
+    paste(irr$data[length(irr$data)])
+  })
+  
+}
+
+
+shinyApp(ui, server)
