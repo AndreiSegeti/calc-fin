@@ -1,3 +1,5 @@
+library(shiny)
+library(shinythemes)
 ##############################################################################################
 ## UI #### UI #### UI #### UI #### UI #### UI #### UI #### UI #### UI #### UI #### UI #### UI 
 ##############################################################################################
@@ -26,7 +28,7 @@ ui <- navbarPage("Calculadora Financeira",
                                      ),
                                      verbatimTextOutput("r1")),
                             tabPanel(div("Juros",
-                                                 class ="text-danger"),
+                                         class ="text-danger"),
                                      wellPanel(
                                        fluidRow(
                                          column(
@@ -41,15 +43,15 @@ ui <- navbarPage("Calculadora Financeira",
                                                                             class = "text-info"),
                                                         value = 1),
                                            selectInput("ki2", "Tipo de Juros",
-                                                 list("--","Compostos", "Simples"))
-                                          
+                                                       list("--","Compostos", "Simples"))
+                                           
                                          )
                                        )
                                      ),
                                      verbatimTextOutput("r2")
-                                     ),
+                            ),
                             tabPanel(div("Período", 
-                                                 class = "text-info"),
+                                         class = "text-info"),
                                      wellPanel(
                                        fluidRow(
                                          column(
@@ -64,31 +66,31 @@ ui <- navbarPage("Calculadora Financeira",
                                                                             class = "text-danger"),
                                                         value = 0.1),
                                            selectInput("ki3", "Tipo de Juros",
-                                                 list("--","Compostos", "Simples")
+                                                       list("--","Compostos", "Simples")
+                                           )
                                          )
                                        )
-                                     )
                                      ),
                                      verbatimTextOutput("r3")),
                             tabPanel(div("Capital Inicial", 
-                                                 class = "text-warning"),
+                                         class = "text-warning"),
                                      wellPanel(
                                        fluidRow(
                                          column(
-                                         4,
-                                         numericInput("vf4", label = div("Future Value",
-                                                                         class= "text-success"),
-                                                      value = 110),
-                                         numericInput("jur4", label = div("Taxa de juros ao ano",
-                                                                          class ="text-danger"), 
-                                                      value = 0.1),
-                                         numericInput("per4", label = div("Período", 
-                                                                          class = "text-info"),
-                                                      value = 1),
-                                         selectInput("ki4", "Tipo de Juros",
-                                                 list("--","Compostos", "Simples")
-                                       )
-                                     )
+                                           4,
+                                           numericInput("vf4", label = div("Future Value",
+                                                                           class= "text-success"),
+                                                        value = 110),
+                                           numericInput("jur4", label = div("Taxa de juros ao ano",
+                                                                            class ="text-danger"), 
+                                                        value = 0.1),
+                                           numericInput("per4", label = div("Período", 
+                                                                            class = "text-info"),
+                                                        value = 1),
+                                           selectInput("ki4", "Tipo de Juros",
+                                                       list("--","Compostos", "Simples")
+                                           )
+                                         )
                                        )
                                        
                                      ),
@@ -246,6 +248,7 @@ server <- function(input, output) {
   ###########################           Intermediary          ##############################
   ###########################     Internal Rate of Return     ##############################
   
+
   observeEvent(input$IRR, {
     h <- 1e-9
     num <- function(n){
@@ -266,24 +269,24 @@ server <- function(input, output) {
         return(sum(data.frame(pv)))
       }
       
-      new.raph <- function(error = 1e-9, x0 = 0, N = 1000){
+      new.raph <- function(error = 1e-9, x0 = 0, rep.t = 1000){
         h = 1e-9
         i = 1
+        rp = rep(0, rep.t)
         x1 = x0
-        p = numeric(N)
-        while (i <= N) {
+        while (i <= rep.t) {
           dg.dx = (g(x0 + h) - g(x0))/h
           x1 = (x0 - (g(x0) / dg.dx))
-          p[i] = x1
+          rp[i] = x1
           i = i + 1
           if (abs(x1 - x0) < error) 
             break
           x0 = x1
         }
-        return(p[1 : (i-1)])
+        return(rp[1 : (i-1)])
       }
       
-      app <- new.raph(x0 = 0)
+      data <- new.raph(x0 = 0)
       
       
     }
@@ -300,4 +303,5 @@ server <- function(input, output) {
 
 
 shinyApp(ui, server)
+
 
