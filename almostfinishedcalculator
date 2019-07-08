@@ -1,11 +1,15 @@
 library(shiny)
 library(shinythemes)
+
 ##############################################################################################
 ## UI #### UI #### UI #### UI #### UI #### UI #### UI #### UI #### UI #### UI #### UI #### UI 
 ##############################################################################################
-ui <- navbarPage("Calculadora Financeira",
+
+ui <- navbarPage("Calculadora Financeira", #navbar permite uma navegação mais intuitiva através das tabs
                  theme = shinytheme("superhero"),
+                            #A partir dessa linha, personalizo as cores com uma funcionalidade do CSS (div(,class=))
                  navbarMenu(div("Basics", class = "text-secondary"),
+                            
                             tabPanel(div("Future Value",
                                          class= "text-success"),
                                      wellPanel(
@@ -26,7 +30,10 @@ ui <- navbarPage("Calculadora Financeira",
                                          )
                                        )
                                      ),
-                                     verbatimTextOutput("r1")),
+                                     wellPanel(
+                                       verbatimTextOutput("r1")
+                                       )
+                                     ),
                             tabPanel(div("Juros",
                                          class ="text-danger"),
                                      wellPanel(
@@ -48,7 +55,8 @@ ui <- navbarPage("Calculadora Financeira",
                                          )
                                        )
                                      ),
-                                     verbatimTextOutput("r2")
+                                     wellPanel(verbatimTextOutput("r2")
+                                               )
                             ),
                             tabPanel(div("Período", 
                                          class = "text-info"),
@@ -71,7 +79,9 @@ ui <- navbarPage("Calculadora Financeira",
                                          )
                                        )
                                      ),
-                                     verbatimTextOutput("r3")),
+                                     wellPanel(verbatimTextOutput("r3")
+                                     )
+                                     ),
                             tabPanel(div("Capital Inicial", 
                                          class = "text-warning"),
                                      wellPanel(
@@ -94,7 +104,9 @@ ui <- navbarPage("Calculadora Financeira",
                                        )
                                        
                                      ),
-                                     verbatimTextOutput("r4"))
+                                     wellPanel(verbatimTextOutput("r4")
+                                     )
+                                     )
                  ),
                  navbarMenu(div("Advanced",class="text-danger"), 
                             tabPanel(div("Present Value with Cash Flow", 
@@ -107,9 +119,9 @@ ui <- navbarPage("Calculadora Financeira",
                                      numericInput("rij", label = div("Interest",
                                                                      class ="text-secondary"),
                                                   value = 0.1),
-                                     actionButton("rical1", label = "Calculate"),
-                                     verbatimTextOutput("ri1")
-                            ),
+                                     actionButton("rical1", label = "Calculate", style="color: #fff; background-color: rgb(83, 116, 104)"),
+                                     wellPanel(verbatimTextOutput("ri1"))
+                                     ),
                             tabPanel(div("NPV",
                                          class= "text-success"),
                                      numericInput("ricf2", label = div("Constant Cash Flow",
@@ -124,8 +136,8 @@ ui <- navbarPage("Calculadora Financeira",
                                      numericInput("rij2", label = div("Interest",
                                                                       class ="text-secondary"),
                                                   value = 0.1),
-                                     actionButton("rical2", label = "Calculate"),
-                                     verbatimTextOutput("ri2")
+                                     actionButton("rical2", label = "Calculate", style="color: #fff; background-color: rgb(83, 116, 104)"),
+                                     wellPanel(verbatimTextOutput("ri2"))
                             ),
                             tabPanel(div("IRR",
                                          class ="text-secondary"),
@@ -138,8 +150,8 @@ ui <- navbarPage("Calculadora Financeira",
                                      numericInput("pow", label = div("Number of entries", 
                                                                      class = "text-info"),
                                                   value = 2),
-                                     actionButton("IRR", label = "Calculate"),
-                                     verbatimTextOutput("der")
+                                     actionButton("IRR", label = "Calculate", style="color: #fff; background-color: rgb(83, 116, 104)"),
+                                     wellPanel(verbatimTextOutput("der"))
                             )
                  )
 )
@@ -325,3 +337,4 @@ server <- function(input, output) {
 
 
 shinyApp(ui, server)
+
