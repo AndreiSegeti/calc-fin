@@ -30,6 +30,7 @@ ui <- navbarPage("Calculadora Financeira", #navbar permite uma navegação mais 
                                          )
                                        )
                                      ),
+                                     hr(),
                                      wellPanel(
                                        verbatimTextOutput("r1")
                                        )
@@ -55,6 +56,7 @@ ui <- navbarPage("Calculadora Financeira", #navbar permite uma navegação mais 
                                          )
                                        )
                                      ),
+                                     hr(),
                                      wellPanel(verbatimTextOutput("r2")
                                                )
                             ),
@@ -79,6 +81,7 @@ ui <- navbarPage("Calculadora Financeira", #navbar permite uma navegação mais 
                                          )
                                        )
                                      ),
+                                     hr(),
                                      wellPanel(verbatimTextOutput("r3")
                                      )
                                      ),
@@ -104,6 +107,7 @@ ui <- navbarPage("Calculadora Financeira", #navbar permite uma navegação mais 
                                        )
                                        
                                      ),
+                                     hr(),
                                      wellPanel(verbatimTextOutput("r4")
                                      )
                                      )
@@ -120,6 +124,7 @@ ui <- navbarPage("Calculadora Financeira", #navbar permite uma navegação mais 
                                                                      class ="text-secondary"),
                                                   value = 0.1),
                                      actionButton("rical1", label = "Calculate", style="color: #fff; background-color: rgb(83, 116, 104)"),
+                                     hr(),
                                      wellPanel(verbatimTextOutput("ri1"))
                                      ),
                             tabPanel(div("NPV",
@@ -137,6 +142,7 @@ ui <- navbarPage("Calculadora Financeira", #navbar permite uma navegação mais 
                                                                       class ="text-secondary"),
                                                   value = 0.1),
                                      actionButton("rical2", label = "Calculate", style="color: #fff; background-color: rgb(83, 116, 104)"),
+                                     hr(),
                                      wellPanel(verbatimTextOutput("ri2"))
                             ),
                             tabPanel(div("IRR",
@@ -151,6 +157,7 @@ ui <- navbarPage("Calculadora Financeira", #navbar permite uma navegação mais 
                                                                      class = "text-info"),
                                                   value = 2),
                                      actionButton("IRR", label = "Calculate", style="color: #fff; background-color: rgb(83, 116, 104)"),
+                                     hr(),
                                      wellPanel(verbatimTextOutput("der"))
                             )
                  )
@@ -337,4 +344,5 @@ server <- function(input, output) {
 
 
 shinyApp(ui, server)
+
 
