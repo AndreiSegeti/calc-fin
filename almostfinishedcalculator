@@ -7,7 +7,7 @@ library(shinythemes)
 
 ui <- navbarPage("Calculadora Financeira", #navbar permite uma navegação mais intuitiva através das tabs
                  theme = shinytheme("superhero"),
-                            #A partir dessa linha, personalizo as cores com uma funcionalidade do CSS (div(,class=))
+                 #A partir dessa linha, personalizo as cores com uma funcionalidade do CSS (div(,class=))
                  navbarMenu(div("Basics", class = "text-secondary"),
                             
                             tabPanel(div("Future Value",
@@ -33,8 +33,8 @@ ui <- navbarPage("Calculadora Financeira", #navbar permite uma navegação mais 
                                      hr(),
                                      wellPanel(
                                        verbatimTextOutput("r1")
-                                       )
-                                     ),
+                                     )
+                            ),
                             tabPanel(div("Juros",
                                          class ="text-danger"),
                                      wellPanel(
@@ -58,7 +58,7 @@ ui <- navbarPage("Calculadora Financeira", #navbar permite uma navegação mais 
                                      ),
                                      hr(),
                                      wellPanel(verbatimTextOutput("r2")
-                                               )
+                                     )
                             ),
                             tabPanel(div("Período", 
                                          class = "text-info"),
@@ -84,7 +84,7 @@ ui <- navbarPage("Calculadora Financeira", #navbar permite uma navegação mais 
                                      hr(),
                                      wellPanel(verbatimTextOutput("r3")
                                      )
-                                     ),
+                            ),
                             tabPanel(div("Capital Inicial", 
                                          class = "text-warning"),
                                      wellPanel(
@@ -110,25 +110,27 @@ ui <- navbarPage("Calculadora Financeira", #navbar permite uma navegação mais 
                                      hr(),
                                      wellPanel(verbatimTextOutput("r4")
                                      )
-                                     )
+                            )
                  ),
                  navbarMenu(div("Advanced",class="text-danger"), 
                             tabPanel(div("Present Value with Cash Flow", 
                                          class = "text-warning"),
+                                     wellPanel(
                                      numericInput("ricf", label = div("Constant Cash Flow",
                                                                       class= "text-success"), 
-                                                                      value = 100),
+                                                  value = 100),
                                      numericInput("rin", label = div("Number of entries", 
                                                                      class = "text-info"), value = 5),
                                      numericInput("rij", label = div("Interest",
                                                                      class ="text-secondary"),
                                                   value = 0.1),
-                                     actionButton("rical1", label = "Calculate", style="color: #fff; background-color: rgb(83, 116, 104)"),
+                                     actionButton("rical1", label = "Calculate", style="color: #fff; background-color: rgb(83, 116, 104)")),
                                      hr(),
                                      wellPanel(verbatimTextOutput("ri1"))
-                                     ),
+                            ),
                             tabPanel(div("NPV",
                                          class= "text-success"),
+                                     wellPanel(
                                      numericInput("ricf2", label = div("Constant Cash Flow",
                                                                        class= "text-success"),
                                                   value = 100),
@@ -141,12 +143,13 @@ ui <- navbarPage("Calculadora Financeira", #navbar permite uma navegação mais 
                                      numericInput("rij2", label = div("Interest",
                                                                       class ="text-secondary"),
                                                   value = 0.1),
-                                     actionButton("rical2", label = "Calculate", style="color: #fff; background-color: rgb(83, 116, 104)"),
+                                     actionButton("rical2", label = "Calculate", style="color: #fff; background-color: rgb(83, 116, 104)")),
                                      hr(),
                                      wellPanel(verbatimTextOutput("ri2"))
                             ),
                             tabPanel(div("IRR",
                                          class ="text-secondary"),
+                                     wellPanel(
                                      numericInput("co", label = div("CFo",
                                                                     class ="text-danger"),
                                                   value = -60),
@@ -156,11 +159,88 @@ ui <- navbarPage("Calculadora Financeira", #navbar permite uma navegação mais 
                                      numericInput("pow", label = div("Number of entries", 
                                                                      class = "text-info"),
                                                   value = 2),
-                                     actionButton("IRR", label = "Calculate", style="color: #fff; background-color: rgb(83, 116, 104)"),
+                                     actionButton("IRR", label = "Calculate", style="color: #fff; background-color: rgb(83, 116, 104)")),
                                      hr(),
                                      wellPanel(verbatimTextOutput("der"))
                             )
-                 )
+                 ),
+                 navbarMenu(div("PARTIAL",class="text-danger"),
+                            tabPanel(div("NPVdumb", class= "text-success"),
+                                     wellPanel(
+                                       fluidRow(
+                                       column(3,
+                                     numericInput("jv" , "Interest"  , value=0.1), offset = 0)
+                                     )),
+                                     hr(),
+                                     wellPanel(
+                                       fluidRow(
+                                       column(3,
+                                     numericInput("c0v" , "c0" , value=0), offset = 0)
+                                     )),
+                                     hr(),
+                                     wellPanel(
+                                       fluidRow(
+                                         column(3,
+                                                numericInput("c1v" , "c1" , value=0), offset = 0),
+                                         column(3,
+                                                numericInput("c2v" , "c2" , value=0), offset = 1.5),
+                                         column(3,
+                                                numericInput("c3v" , "c3" , value=0), offset = 1.5),
+                                         column(3,
+                                                numericInput("c4v" , "c4" , value=0), offset = 1.5)
+                                         )
+                                       ),
+                                     wellPanel(
+                                       fluidRow(
+                                         column(3,
+                                                numericInput("c5v" , "c5" , value=0), offset = 0),
+                                         column(3,
+                                                numericInput("c6v" , "c6" , value=0), offset = 1.5),
+                                         column(3,
+                                                numericInput("c7v" , "c7" , value=0), offset = 1.5),
+                                         column(3,
+                                                numericInput("c8v" , "c8" , value=0), offset = 1.5)
+                                       )
+                                     ),
+                                     wellPanel(
+                                       fluidRow(
+                                         column(3,
+                                                numericInput("c9v" , "c9" , value=0), offset = 0),
+                                         column(3,
+                                                numericInput("c10v" , "c10" , value=0), offset = 1.5),
+                                         column(3,
+                                                numericInput("c11v" , "c11" , value=0), offset = 1.5),
+                                         column(3,
+                                                numericInput("c12v" , "c12" , value=0), offset = 1.5)
+                                       )
+                                     ),
+                                     wellPanel(
+                                       fluidRow(
+                                         column(3,
+                                                numericInput("c13v" , "c13" , value=0), offset = 0),
+                                         column(3,
+                                                numericInput("c14v" , "c14" , value=0), offset = 1.5),
+                                         column(3,
+                                                numericInput("c15v" , "c15" , value=0), offset = 1.5),
+                                         column(3,
+                                                numericInput("c16v" , "c16" , value=0), offset = 1.5),
+                                       )),
+                                       wellPanel(
+                                         fluidRow(
+                                       column(3,
+                                              numericInput("c7v" , "c7" , value=0), offset = 1.5),
+                                       column(3,
+                                              numericInput("c8v" , "c8" , value=0), offset = 1.5),
+                                       column(3,
+                                              numericInput("c9v" , "c9" , value=0), offset = 0),
+                                       column(3,
+                                              numericInput("c2v" , "c2" , value=0), offset = 1.5))
+                                       ),
+                                       
+                                     actionButton("NPV", "Calculate"),
+                                     hr(),
+                                     wellPanel(verbatimTextOutput("npv2"))))
+                                         
 )
 
 ##############################################################################################
@@ -175,6 +255,7 @@ server <- function(input, output) {
   vpc  <- reactiveValues(data = NULL)
   nv   <- reactiveValues(data = NULL)
   irr  <- reactiveValues(data = NULL)
+  nvv  <- reactiveValues(data = NULL)
   
   ###########################        Basics      ##############################
   ###########################     Future Value   ##############################
@@ -289,7 +370,7 @@ server <- function(input, output) {
   ###########################           Intermediary          ##############################
   ###########################     Internal Rate of Return     ##############################
   
-
+  
   observeEvent(input$IRR, {
     h <- 1e-9
     num <- function(n){
@@ -340,9 +421,29 @@ server <- function(input, output) {
     paste(irr$data[length(irr$data)])
   })
   
+
+
+###########################          PARTIAL           ##############################
+###########################          PARTIAL           ##############################
+
+observeEvent(input$NPV,{
+  fac.d <- rep(0, 16)
+  for(i in 0:15){
+    if(i==0){
+      fac.d[1] <- 1
+    }
+    fac.d[i+1] <- (1 + input$jv)^i
+    pv <- c(input$c0v, input$c1v, input$c2v, input$c3v, input$c4v, input$c5v, input$c6v, input$c7v, input$c8v, input$c9v, input$c10v, input$c11v, input$c12v, input$c13v, input$c14v, input$c15v)
+    nvv$data <- sum(pv/fac.d)
+  }
+  
+  nvv$data  <-  sum(pv/fac.d)
+})
+
+output$npv2 <- renderText({
+  paste(nvv$data)
+})
+
 }
 
-
 shinyApp(ui, server)
-
-
