@@ -32,6 +32,7 @@ ui <- navbarPage("Calculadora Financeira", #navbar permite uma navegação mais 
                                        )
                                      ),
                                      hr(),
+                                     actionButton("go1", "Calculate"),
                                      wellPanel(
                                        verbatimTextOutput("r1")
                                      )
@@ -58,6 +59,7 @@ ui <- navbarPage("Calculadora Financeira", #navbar permite uma navegação mais 
                                        )
                                      ),
                                      hr(),
+                                     actionButton("go2", "Calculate"),
                                      wellPanel(verbatimTextOutput("r2")
                                      )
                             ),
@@ -83,6 +85,7 @@ ui <- navbarPage("Calculadora Financeira", #navbar permite uma navegação mais 
                                        )
                                      ),
                                      hr(),
+                                     actionButton("go3", "Calculate"),
                                      wellPanel(verbatimTextOutput("r3")
                                      )
                             ),
@@ -109,6 +112,7 @@ ui <- navbarPage("Calculadora Financeira", #navbar permite uma navegação mais 
                                        
                                      ),
                                      hr(),
+                                     actionButton("go4", "Calculate"),
                                      wellPanel(verbatimTextOutput("r4")
                                      )
                             )
@@ -121,21 +125,18 @@ ui <- navbarPage("Calculadora Financeira", #navbar permite uma navegação mais 
                                                 numericInput(
                                                   "period", "Number of periods", 
                                                   value = 5, min = 1, max = 20))
-                                       )),
-                                     wellPanel(
-                                       fluidRow(
+                                       ),
+                                     fluidRow(
                                          column(3,
                                                 numericInput("jv" , "Interest"  , value=0.1), offset = 0)
-                                       )),
-                                     hr(),
-                                     wellPanel(
-                                       fluidRow(
+                                       ),
+                                     fluidRow(
                                          column(3,
                                                 numericInput("c0v" , "c0" , value=0), offset = 0)
                                        )),
                                      hr(),
                                      wellPanel(
-                                      fluidRow(
+                                       fluidRow(
                                          column(3,
                                                 uiOutput("cf1v")),
                                          column(3,
@@ -187,9 +188,8 @@ ui <- navbarPage("Calculadora Financeira", #navbar permite uma navegação mais 
                                        )),
                                      hr(),
                                      wellPanel(
-                                       actionButton("calc","Calculate")
-                                     ),
-                                     wellPanel( 
+                                       actionButton("calc","Calculate"),
+                                       hr(),
                                        verbatimTextOutput("PV"),
                                        verbatimTextOutput("npv"),
                                        verbatimTextOutput("irr")))
@@ -219,20 +219,17 @@ server <- function(input, output) {
   ###########################     Future Value   ##############################
   
   
-  observeEvent(input$ki1, {
-    vf$doText <- input$ki1
-  })
-  
-  output$r1 <- renderText({
-    if (vf$doText == FALSE) return()
-    isolate({
-      data <-
+  observeEvent(input$go1, {
+    
         if(input$ki1 == "Compostos"){
           vf$data <- paste("Valor Futuro:", (input$c11)*(1 + (input$jur1))^(input$per1))
         } else {
           vf$data <- paste("Valor Futuro:", (input$c11) + (input$c11)*(input$jur1)*(input$per1))
         }
-    })
+  })
+  
+  output$r1 <- renderText({
+    paste(vf$data)
   })
   
   
@@ -240,20 +237,17 @@ server <- function(input, output) {
   ###########################     Juros      ##############################
   
   
-  observeEvent(input$ki2, {
-    j$doText <- input$ki2
-  })
-  
-  output$r2 <- renderText({
-    if (j$doText == FALSE) return()
-    isolate({
-      data <-
-        if(input$ki2 == "Compostos"){
+  observeEvent(input$go2, {
+   if(input$ki2 == "Compostos"){
           j$data <- paste("Juros:", (input$vf2/input$c12)^(1/input$per2) - 1)
         } else {
           j$data <- paste("Juros:", ((input$vf2 - input$c12)/input$c12)/input$per2)
         }
-    })
+    
+  })
+  
+  output$r2 <- renderText({
+    paste(j$data)
   })
   
   
@@ -261,20 +255,17 @@ server <- function(input, output) {
   ###########################    Período    ##############################
   
   
-  observeEvent(input$ki3, {
-    p$doText <- input$ki3
-  })
-  
-  output$r3 <- renderText({
-    if (p$doText == FALSE) return()
-    isolate({
-      data <-
-        if(input$ki3 == "Compostos"){
+  observeEvent(input$go3, {
+          if(input$ki3 == "Compostos"){
           p$data <- paste("Período:", log(input$vf3/input$c13)/log(1+input$jur3))
         } else {
           p$data <- paste("Período:", (input$vf3 - input$c13)/(input$jur3*input$c13))
         }
-    })
+    
+  })
+  
+  output$r3 <- renderText({
+    paste(p$data)
   })
   
   
@@ -282,23 +273,19 @@ server <- function(input, output) {
   ###########################    Present Value    ##############################
   
   
-  observeEvent(input$ki4, {
-    vp$doText <- input$ki4
-  })
-  
-  output$r4 <- renderText({
-    if (vp$doText == FALSE) return()
-    isolate({
-      data <-
-        if(input$ki4 == "Compostos"){
+  observeEvent(input$go4, {
+    data <- if(input$ki4 == "Compostos"){
           vp$data <- paste("Valor Presente:", input$vf4/((1+input$jur4)^input$per4))
         } else {
           vp$data <- paste("Valor Presente:", (input$vf4/(1 + (input$jur4)*(input$per4))))
         }
-    })
+     }) 
+    
+  output$r4 <- renderText({ 
+    paste(vp$data)
   })
   
-
+  
   ###########################        INTERMEDIARY        ##############################
   ###########################         NPV & IRR          ##############################
   
@@ -518,7 +505,7 @@ server <- function(input, output) {
   output$irr <- renderText({
     paste("IRR:", irrvv())
   })
- 
+  
 }
 
 shinyApp(ui, server)
