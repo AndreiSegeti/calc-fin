@@ -2,22 +2,22 @@ library(quantmod)
 library(shiny)
 library(shinythemes)
 
-a <- getSymbols("BRLUSD=X", auto.assign = FALSE)
+a <- getSymbols("BRLUSD=X", auto.assign = FALSE, to = Sys.Date())
 a <- (round(data.frame(a)[nrow(a), ncol(a)], 3))
 
-b <- getSymbols("BRLEUR=X", auto.assign = FALSE)
+b <- getSymbols("BRLEUR=X", auto.assign = FALSE, to = Sys.Date())
 b <- (round(data.frame(b)[nrow(b), ncol(b)], 3))
 
-c <- getSymbols("USDBRL=X", auto.assign = FALSE)
+c <- getSymbols("USDBRL=X", auto.assign = FALSE, to = Sys.Date())
 c <- (round(data.frame(c)[nrow(c), ncol(c)], 3))
 
-g <- getSymbols("USDEUR=X", auto.assign = FALSE)
+g <- getSymbols("USDEUR=X", auto.assign = FALSE, to = Sys.Date())
 g <- (round(data.frame(g)[nrow(g), ncol(g)], 3))
 
-e <- getSymbols("EURBRL=X", auto.assign = FALSE)
+e <- getSymbols("EURBRL=X", auto.assign = FALSE, to = Sys.Date())
 e <- (round(data.frame(e)[nrow(e), ncol(e)], 3))
 
-f <- getSymbols("EURUSD=X", auto.assign = FALSE)
+f <- getSymbols("EURUSD=X", auto.assign = FALSE, to = Sys.Date())
 f <- (round(data.frame(f)[nrow(f), ncol(f)], 3))
 
 ##############################################################################################
@@ -246,14 +246,14 @@ server <- function(input, output) {
   observeEvent(input$go1, {
     
         if(input$ki1 == "Compostos"){
-          vf$data <- paste("Valor Futuro:", (input$c11)*(1 + (input$jur1))^(input$per1))
+          vf$data <- round((input$c11)*(1 + (input$jur1))^(input$per1), 2)
         } else {
-          vf$data <- paste("Valor Futuro:", (input$c11) + (input$c11)*(input$jur1)*(input$per1))
+          vf$data <- round((input$c11) + (input$c11)*(input$jur1)*(input$per1), 2)
         }
   })
   
   output$r1 <- renderText({
-    paste(vf$data)
+    paste("Valor Futuro:", vf$data)
   })
   
   
@@ -263,15 +263,15 @@ server <- function(input, output) {
   
   observeEvent(input$go2, {
    if(input$ki2 == "Compostos"){
-          j$data <- paste("Juros:", (input$vf2/input$c12)^(1/input$per2) - 1)
+          j$data <- round(((input$vf2/input$c12)^(1/input$per2) - 1)*100, 2)
         } else {
-          j$data <- paste("Juros:", ((input$vf2 - input$c12)/input$c12)/input$per2)
-        }
+          j$data <- round((((input$vf2 - input$c12)/input$c12)/input$per2)*100, 2)
+        } 
     
   })
   
   output$r2 <- renderText({
-    paste(j$data)
+    paste("Juros:", j$data, "%")
   })
   
   
@@ -281,15 +281,15 @@ server <- function(input, output) {
   
   observeEvent(input$go3, {
           if(input$ki3 == "Compostos"){
-          p$data <- paste("Período:", log(input$vf3/input$c13)/log(1+input$jur3))
+          p$data <- round(log(input$vf3/input$c13)/log(1+input$jur3), 2)
         } else {
-          p$data <- paste("Período:", (input$vf3 - input$c13)/(input$jur3*input$c13))
+          p$data <- round((input$vf3 - input$c13)/(input$jur3*input$c13), 2)
         }
     
   })
   
   output$r3 <- renderText({
-    paste(p$data)
+    paste("Período:", p$data)
   })
   
   
@@ -298,15 +298,15 @@ server <- function(input, output) {
   
   
   observeEvent(input$go4, {
-    data <- if(input$ki4 == "Compostos"){
-          vp$data <- paste("Valor Presente:", input$vf4/((1+input$jur4)^input$per4))
+    if(input$ki4 == "Compostos"){
+          vp$data <- round(input$vf4/((1+input$jur4)^input$per4), 2)
         } else {
-          vp$data <- paste("Valor Presente:", (input$vf4/(1 + (input$jur4)*(input$per4))))
+          vp$data <- round(input$vf4/(1 + (input$jur4)*(input$per4)), 2)
         }
      }) 
     
   output$r4 <- renderText({ 
-    paste(vp$data)
+    paste("Valor Presente:", vp$data)
   })
   
   
@@ -478,7 +478,7 @@ server <- function(input, output) {
       sum(as.data.frame(b()))
     })
     
-    d()
+    round(d(),2)
   }
   output$npv <- renderText({
     paste("NPV:", npvvv())
@@ -524,10 +524,10 @@ server <- function(input, output) {
     }
     
     data <- new.raph1(x0 = 0)
-    data[length(data)]
+    round(data[length(data)]*100,2)
   }
   output$irr <- renderText({
-    paste("IRR:", irrvv())
+    paste("IRR:", irrvv(), "%")
   })
   
   ################################# CONVERSOR ################################
