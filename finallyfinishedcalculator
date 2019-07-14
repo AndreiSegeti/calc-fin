@@ -1,6 +1,24 @@
+library(quantmod)
 library(shiny)
 library(shinythemes)
 
+a <- getSymbols("BRLUSD=X", auto.assign = FALSE)
+a <- (round(data.frame(a)[nrow(a), ncol(a)], 3))
+
+b <- getSymbols("BRLEUR=X", auto.assign = FALSE)
+b <- (round(data.frame(b)[nrow(b), ncol(b)], 3))
+
+c <- getSymbols("USDBRL=X", auto.assign = FALSE)
+c <- (round(data.frame(c)[nrow(c), ncol(c)], 3))
+
+g <- getSymbols("USDEUR=X", auto.assign = FALSE)
+g <- (round(data.frame(g)[nrow(g), ncol(g)], 3))
+
+e <- getSymbols("EURBRL=X", auto.assign = FALSE)
+e <- (round(data.frame(e)[nrow(e), ncol(e)], 3))
+
+f <- getSymbols("EURUSD=X", auto.assign = FALSE)
+f <- (round(data.frame(f)[nrow(f), ncol(f)], 3))
 
 ##############################################################################################
 ## UI #### UI #### UI #### UI #### UI #### UI #### UI #### UI #### UI #### UI #### UI #### UI 
@@ -193,8 +211,13 @@ ui <- navbarPage("Calculadora Financeira", #navbar permite uma navegação mais 
                                        verbatimTextOutput("PV"),
                                        verbatimTextOutput("npv"),
                                        verbatimTextOutput("irr")))
-                 )
-                 
+                 ),
+                 tabPanel("teste",
+                          numericInput("v", "value", value=0),
+                          selectInput("cur", "value in", c("BRL", "USD", "EUR")),
+                          selectInput("conv", "value to ", c("BRL", "USD", "EUR")),
+                          verbatimTextOutput("res")
+                          )
 )
 
 
@@ -204,16 +227,17 @@ ui <- navbarPage("Calculadora Financeira", #navbar permite uma navegação mais 
 
 
 server <- function(input, output) {
-  vf   <- reactiveValues(doText = NULL)
-  j    <- reactiveValues(doText = NULL)
-  p    <- reactiveValues(doText = NULL)
-  vp   <- reactiveValues(doText = NULL)
+  
+  vf   <- reactiveValues(data = NULL)
+  j    <- reactiveValues(data = NULL)
+  p    <- reactiveValues(data = NULL)
+  vp   <- reactiveValues(data = NULL)
   vpc  <- reactiveValues(data = NULL)
   nv   <- reactiveValues(data = NULL)
   irr  <- reactiveValues(data = NULL)
   nvv  <- reactiveValues(data = NULL)
   irrv <- reactiveValues(data = NULL)
-  
+  d <- reactiveValues(data = NULL)
   
   ###########################        Basics      ##############################
   ###########################     Future Value   ##############################
@@ -504,6 +528,47 @@ server <- function(input, output) {
   }
   output$irr <- renderText({
     paste("IRR:", irrvv())
+  })
+  
+  ################################# CONVERSOR ################################
+  ################################# CONVERSOR ################################
+  
+  twoevents <- reactive({
+    paste(input$cur, input$conv)
+  })
+  
+  observeEvent(twoevents(), {
+    if(input$cur == input$conv){
+      d$result <- input$v
+    }
+    
+    if(input$cur == "BRL" & input$conv == "USD"){
+      d$result <- input$v*a
+    } 
+    if(input$cur == "BRL" & input$conv == "EUR"){
+      d$result <- input$v*b
+    }  
+    
+    if(input$cur == "USD" & input$conv == "BRL"){
+      d$result <- input$v*c
+    } 
+    
+    if(input$cur == "USD" & input$conv == "EUR"){
+      d$result <- input$v*g
+    }  
+    
+    if(input$cur == "EUR" & input$conv == "BRL"){
+      d$result <- input$v*e
+    } 
+    
+    if(input$cur == "EUR" & input$conv == "USD"){
+      d$result <- input$v*f
+    }  
+    
+  })
+  
+  output$res <- renderText({
+    paste(d$result)
   })
   
 }
