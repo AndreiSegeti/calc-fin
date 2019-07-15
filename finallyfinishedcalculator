@@ -2,30 +2,12 @@ library(quantmod)
 library(shiny)
 library(shinythemes)
 
-a <- getSymbols("BRLUSD=X", auto.assign = FALSE, to = Sys.Date())
-a <- (round(data.frame(a)[nrow(a), ncol(a)], 3))
-
-b <- getSymbols("BRLEUR=X", auto.assign = FALSE, to = Sys.Date())
-b <- (round(data.frame(b)[nrow(b), ncol(b)], 3))
-
-c <- getSymbols("USDBRL=X", auto.assign = FALSE, to = Sys.Date())
-c <- (round(data.frame(c)[nrow(c), ncol(c)], 3))
-
-g <- getSymbols("USDEUR=X", auto.assign = FALSE, to = Sys.Date())
-g <- (round(data.frame(g)[nrow(g), ncol(g)], 3))
-
-e <- getSymbols("EURBRL=X", auto.assign = FALSE, to = Sys.Date())
-e <- (round(data.frame(e)[nrow(e), ncol(e)], 3))
-
-f <- getSymbols("EURUSD=X", auto.assign = FALSE, to = Sys.Date())
-f <- (round(data.frame(f)[nrow(f), ncol(f)], 3))
-
 ##############################################################################################
 ## UI #### UI #### UI #### UI #### UI #### UI #### UI #### UI #### UI #### UI #### UI #### UI 
 ##############################################################################################
 
 
-ui <- navbarPage("Calculadora Financeira", #navbar permite uma navegação mais intuitiva através das tabs
+ui <- navbarPage("BASIC FINANCE APP", #navbar permite uma navegação mais intuitiva através das tabs
                  theme = shinytheme("slate"),
                  #A partir dessa linha, personalizo as cores com uma funcionalidade do CSS (div(,class=))
                  navbarMenu(div("Basics", class = "text-secondary"),
@@ -144,11 +126,11 @@ ui <- navbarPage("Calculadora Financeira", #navbar permite uma navegação mais 
                                                   "period", "Number of periods", 
                                                   value = 5, min = 1, max = 20))
                                        ),
-                                     fluidRow(
+                                       fluidRow(
                                          column(3,
                                                 numericInput("jv" , "Interest"  , value=0.1), offset = 0)
                                        ),
-                                     fluidRow(
+                                       fluidRow(
                                          column(3,
                                                 numericInput("c0v" , "c0" , value=0), offset = 0)
                                        )),
@@ -213,11 +195,12 @@ ui <- navbarPage("Calculadora Financeira", #navbar permite uma navegação mais 
                                        verbatimTextOutput("irr")))
                  ),
                  tabPanel("Convert currencies",
-                          numericInput("v", "value", value=0),
-                          selectInput("cur1", "value in", c("BRL", "USD", "EUR")),
-                          selectInput("conv", "value to ", c("BRL", "USD", "EUR")),
-                          verbatimTextOutput("res")
-                          ),
+                          column(4,
+                                 numericInput("v", "value", value=0),
+                                 selectInput("cur1", "value in", c("BRL", "USD", "EUR")),
+                                 selectInput("conv", "value to", c("BRL", "USD", "EUR")),
+                                 verbatimTextOutput("res"))
+                 ),
                  tabPanel("Assets, Currencies, Commodities",
                           fluidRow(
                             column(4,
@@ -264,11 +247,11 @@ server <- function(input, output) {
   
   observeEvent(input$go1, {
     
-        if(input$ki1 == "Compostos"){
-          vf$data <- round((input$c11)*(1 + (input$jur1))^(input$per1), 2)
-        } else {
-          vf$data <- round((input$c11) + (input$c11)*(input$jur1)*(input$per1), 2)
-        }
+    if(input$ki1 == "Compostos"){
+      vf$data <- round((input$c11)*(1 + (input$jur1))^(input$per1), 2)
+    } else {
+      vf$data <- round((input$c11) + (input$c11)*(input$jur1)*(input$per1), 2)
+    }
   })
   
   output$r1 <- renderText({
@@ -281,11 +264,11 @@ server <- function(input, output) {
   
   
   observeEvent(input$go2, {
-   if(input$ki2 == "Compostos"){
-          j$data <- round(((input$vf2/input$c12)^(1/input$per2) - 1)*100, 2)
-        } else {
-          j$data <- round((((input$vf2 - input$c12)/input$c12)/input$per2)*100, 2)
-        } 
+    if(input$ki2 == "Compostos"){
+      j$data <- round(((input$vf2/input$c12)^(1/input$per2) - 1)*100, 2)
+    } else {
+      j$data <- round((((input$vf2 - input$c12)/input$c12)/input$per2)*100, 2)
+    } 
     
   })
   
@@ -299,11 +282,11 @@ server <- function(input, output) {
   
   
   observeEvent(input$go3, {
-          if(input$ki3 == "Compostos"){
-          p$data <- round(log(input$vf3/input$c13)/log(1+input$jur3), 2)
-        } else {
-          p$data <- round((input$vf3 - input$c13)/(input$jur3*input$c13), 2)
-        }
+    if(input$ki3 == "Compostos"){
+      p$data <- round(log(input$vf3/input$c13)/log(1+input$jur3), 2)
+    } else {
+      p$data <- round((input$vf3 - input$c13)/(input$jur3*input$c13), 2)
+    }
     
   })
   
@@ -318,12 +301,12 @@ server <- function(input, output) {
   
   observeEvent(input$go4, {
     if(input$ki4 == "Compostos"){
-          vp$data <- round(input$vf4/((1+input$jur4)^input$per4), 2)
-        } else {
-          vp$data <- round(input$vf4/(1 + (input$jur4)*(input$per4)), 2)
-        }
-     }) 
-    
+      vp$data <- round(input$vf4/((1+input$jur4)^input$per4), 2)
+    } else {
+      vp$data <- round(input$vf4/(1 + (input$jur4)*(input$per4)), 2)
+    }
+  }) 
+  
   output$r4 <- renderText({ 
     paste("Valor Presente:", vp$data)
   })
@@ -552,6 +535,24 @@ server <- function(input, output) {
   ################################# CONVERSOR ################################
   ################################# CONVERSOR ################################
   
+  a <- getSymbols("BRLUSD=X", auto.assign = FALSE, to = Sys.Date())
+  a <- (round(data.frame(a)[nrow(a), ncol(a)], 3))
+  
+  b <- getSymbols("BRLEUR=X", auto.assign = FALSE, to = Sys.Date())
+  b <- (round(data.frame(b)[nrow(b), ncol(b)], 3))
+  
+  c <- getSymbols("USDBRL=X", auto.assign = FALSE, to = Sys.Date())
+  c <- (round(data.frame(c)[nrow(c), ncol(c)], 3))
+  
+  g <- getSymbols("USDEUR=X", auto.assign = FALSE, to = Sys.Date())
+  g <- (round(data.frame(g)[nrow(g), ncol(g)], 3))
+  
+  e <- getSymbols("EURBRL=X", auto.assign = FALSE, to = Sys.Date())
+  e <- (round(data.frame(e)[nrow(e), ncol(e)], 3))
+  
+  f <- getSymbols("EURUSD=X", auto.assign = FALSE, to = Sys.Date())
+  f <- (round(data.frame(f)[nrow(f), ncol(f)], 3))
+  
   twoevents <- reactive({
     paste(input$cur1, input$conv)
   })
@@ -583,16 +584,16 @@ server <- function(input, output) {
     if(input$cur1 == "EUR" & input$conv == "USD"){
       d$result <- input$v*f
     }  
-     
+    
   })
   
   output$res <- renderText({
     paste(d$result)
   })
   
-
-################################# ASSETS, CURRENCIES ################################
-################################# ASSETS, CURRENCIES ################################
+  
+  ################################# ASSETS, CURRENCIES ################################
+  ################################# ASSETS, CURRENCIES ################################
   
   observeEvent(input$g1,{
     acc$data <-  getSymbols(input$cur2, from = input$di, to = input$dfi, auto.assign = FALSE)
@@ -618,7 +619,7 @@ server <- function(input, output) {
   output$stats <- renderText({
     summary(data.frame(acc$data2))
   })
-
+  
 }
 
 shinyApp(ui, server)
