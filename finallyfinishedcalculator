@@ -26,7 +26,7 @@ f <- (round(data.frame(f)[nrow(f), ncol(f)], 3))
 
 
 ui <- navbarPage("Calculadora Financeira", #navbar permite uma navegação mais intuitiva através das tabs
-                 theme = shinytheme("superhero"),
+                 theme = shinytheme("slate"),
                  #A partir dessa linha, personalizo as cores com uma funcionalidade do CSS (div(,class=))
                  navbarMenu(div("Basics", class = "text-secondary"),
                             tabPanel(div("Future Value",
@@ -212,12 +212,30 @@ ui <- navbarPage("Calculadora Financeira", #navbar permite uma navegação mais 
                                        verbatimTextOutput("npv"),
                                        verbatimTextOutput("irr")))
                  ),
-                 tabPanel("teste",
+                 tabPanel("Convert currencies",
                           numericInput("v", "value", value=0),
-                          selectInput("cur", "value in", c("BRL", "USD", "EUR")),
+                          selectInput("cur1", "value in", c("BRL", "USD", "EUR")),
                           selectInput("conv", "value to ", c("BRL", "USD", "EUR")),
                           verbatimTextOutput("res")
-                          )
+                          ),
+                 tabPanel("Assets, Currencies, Commodities",
+                          fluidRow(
+                            column(4,
+                                   textInput("cur2", "Asset, Currency or Commodity"),
+                                   dateInput("di", "Data inicial", value = as.Date("2007-07-07")),
+                                   dateInput("dfi", "Data final", value = Sys.Date()),
+                                   actionButton("g1", "Plot"),
+                                   actionButton("g2", "DataTable"),
+                                   actionButton("reset", "Reset"),
+                                   verbatimTextOutput("stats")
+                            ),
+                            column(8, plotOutput("plot"))
+                          ),
+                          hr(),
+                          fluidRow(
+                            column(12,
+                                   dataTableOutput("table"))
+                          ))
 )
 
 
@@ -238,6 +256,7 @@ server <- function(input, output) {
   nvv  <- reactiveValues(data = NULL)
   irrv <- reactiveValues(data = NULL)
   d <- reactiveValues(data = NULL)
+  acc <- reactiveValues(data = NULL)
   
   ###########################        Basics      ##############################
   ###########################     Future Value   ##############################
@@ -534,43 +553,72 @@ server <- function(input, output) {
   ################################# CONVERSOR ################################
   
   twoevents <- reactive({
-    paste(input$cur, input$conv)
+    paste(input$cur1, input$conv)
   })
   
   observeEvent(twoevents(), {
-    if(input$cur == input$conv){
+    if(input$cur1 == input$conv){
       d$result <- input$v
     }
     
-    if(input$cur == "BRL" & input$conv == "USD"){
+    if(input$cur1 == "BRL" & input$conv == "USD"){
       d$result <- input$v*a
     } 
-    if(input$cur == "BRL" & input$conv == "EUR"){
+    if(input$cur1 == "BRL" & input$conv == "EUR"){
       d$result <- input$v*b
     }  
     
-    if(input$cur == "USD" & input$conv == "BRL"){
+    if(input$cur1 == "USD" & input$conv == "BRL"){
       d$result <- input$v*c
     } 
     
-    if(input$cur == "USD" & input$conv == "EUR"){
+    if(input$cur1 == "USD" & input$conv == "EUR"){
       d$result <- input$v*g
     }  
     
-    if(input$cur == "EUR" & input$conv == "BRL"){
+    if(input$cur1 == "EUR" & input$conv == "BRL"){
       d$result <- input$v*e
     } 
     
-    if(input$cur == "EUR" & input$conv == "USD"){
+    if(input$cur1 == "EUR" & input$conv == "USD"){
       d$result <- input$v*f
     }  
-    
+     
   })
   
   output$res <- renderText({
     paste(d$result)
   })
   
+
+################################# ASSETS, CURRENCIES ################################
+################################# ASSETS, CURRENCIES ################################
+  
+  observeEvent(input$g1,{
+    acc$data <-  getSymbols(input$cur2, from = input$di, to = input$dfi, auto.assign = FALSE)
+  })
+  
+  observeEvent(input$g2, {
+    acc$data2 <- acc$data
+  })
+  
+  observeEvent(input$reset, {
+    acc$data  <- NULL
+    acc$data2 <- NULL
+  })
+  
+  output$plot <- renderPlot({
+    candleChart(acc$data, name= input$cur2)
+  })
+  
+  output$table <- renderDataTable({
+    acc$data2
+  })
+  
+  output$stats <- renderText({
+    summary(data.frame(acc$data2))
+  })
+
 }
 
 shinyApp(ui, server)
