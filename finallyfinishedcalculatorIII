@@ -1,0 +1,586 @@
+library(quantmod)
+library(shiny)
+library(shinythemes)
+
+##############################################################################################
+## UI #### UI #### UI #### UI #### UI #### UI #### UI #### UI #### UI #### UI #### UI #### UI 
+##############################################################################################
+
+
+ui <- navbarPage("BASIC FINANCE APP", #navbar permite uma navegação mais intuitiva através das tabs
+                 theme = shinytheme("slate"),
+                 #A partir dessa linha, personalizo as cores com uma funcionalidade do CSS (div(,class=))
+                 navbarMenu(div("Basics", class = "text-secondary"),
+                            tabPanel(div("Future Value",
+                                         class= "text-success"),
+                                     wellPanel(
+                                       fluidRow(
+                                         column(
+                                           4,
+                                           numericInput("c11",  label = div("Capital Inicial", 
+                                                                            class = "text-warning"), 
+                                                        value = 100),
+                                           numericInput("jur1", label = div("Taxa de juros ao ano",
+                                                                            class = "text-danger"),
+                                                        value = 0.1),
+                                           numericInput("per1", label = div("Período", 
+                                                                            class = "text-info"),
+                                                        value = 1),
+                                           selectInput("ki1", "Tipo de Juros",
+                                                       list("--","Compostos", "Simples"))
+                                         )
+                                       )
+                                     ),
+                                     hr(),
+                                     actionButton("go1", "Calculate"),
+                                     wellPanel(
+                                       verbatimTextOutput("r1")
+                                     )
+                            ),
+                            tabPanel(div("Juros",
+                                         class ="text-danger"),
+                                     wellPanel(
+                                       fluidRow(
+                                         column(
+                                           4,
+                                           numericInput("c12",  label = div("Capital Inicial", 
+                                                                            class = "text-warning"), 
+                                                        value = 100),
+                                           numericInput("vf2", label = div("Future Value",
+                                                                           class= "text-success"),
+                                                        value = 110),
+                                           numericInput("per2", label = div("Período", 
+                                                                            class = "text-info"),
+                                                        value = 1),
+                                           selectInput("ki2", "Tipo de Juros",
+                                                       list("--","Compostos", "Simples"))
+                                           
+                                         )
+                                       )
+                                     ),
+                                     hr(),
+                                     actionButton("go2", "Calculate"),
+                                     wellPanel(verbatimTextOutput("r2")
+                                     )
+                            ),
+                            tabPanel(div("Período", 
+                                         class = "text-info"),
+                                     wellPanel(
+                                       fluidRow(
+                                         column(
+                                           4,
+                                           numericInput("c13",  label = div("Capital Inicial", 
+                                                                            class = "text-warning"), 
+                                                        value = 100),
+                                           numericInput("vf3", label = div("Future Value",
+                                                                           class= "text-success"),
+                                                        value = 110),
+                                           numericInput("jur3", label = div("Taxa de juros ao ano",
+                                                                            class = "text-danger"),
+                                                        value = 0.1),
+                                           selectInput("ki3", "Tipo de Juros",
+                                                       list("--","Compostos", "Simples")
+                                           )
+                                         )
+                                       )
+                                     ),
+                                     hr(),
+                                     actionButton("go3", "Calculate"),
+                                     wellPanel(verbatimTextOutput("r3")
+                                     )
+                            ),
+                            tabPanel(div("Capital Inicial", 
+                                         class = "text-warning"),
+                                     wellPanel(
+                                       fluidRow(
+                                         column(
+                                           4,
+                                           numericInput("vf4", label = div("Future Value",
+                                                                           class= "text-success"),
+                                                        value = 110),
+                                           numericInput("jur4", label = div("Taxa de juros ao ano",
+                                                                            class ="text-danger"), 
+                                                        value = 0.1),
+                                           numericInput("per4", label = div("Período", 
+                                                                            class = "text-info"),
+                                                        value = 1),
+                                           selectInput("ki4", "Tipo de Juros",
+                                                       list("--","Compostos", "Simples")
+                                           )
+                                         )
+                                       )
+                                       
+                                     ),
+                                     hr(),
+                                     actionButton("go4", "Calculate"),
+                                     wellPanel(verbatimTextOutput("r4")
+                                     )
+                            )
+                 ),
+                 navbarMenu(div("Intermediary",class="text-danger"),
+                            tabPanel(div("NPV & IRR", class= "text-success"),
+                                     wellPanel(
+                                       fluidRow(
+                                         column(3, 
+                                                numericInput(
+                                                  "period", "Number of periods", 
+                                                  value = 5, min = 1, max = 20))
+                                       ),
+                                       fluidRow(
+                                         column(3,
+                                                numericInput("jv" , "Interest"  , value=0.1), offset = 0)
+                                       ),
+                                       fluidRow(
+                                         column(3,
+                                                numericInput("c0v" , "c0" , value=0), offset = 0)
+                                       )),
+                                     hr(),
+                                     wellPanel(
+                                       fluidRow(
+                                         column(3,
+                                                uiOutput("cf1v")),
+                                         column(3,
+                                                uiOutput("cf2v")),
+                                         column(3,
+                                                uiOutput("cf3v")),
+                                         column(3,
+                                                uiOutput("cf4v"))
+                                       ),
+                                       fluidRow(
+                                         column(3,
+                                                uiOutput("cf5v")),
+                                         column(3,
+                                                uiOutput("cf6v")),
+                                         column(3,
+                                                uiOutput("cf7v")),
+                                         column(3,
+                                                uiOutput("cf8v"))
+                                       ),
+                                       fluidRow(
+                                         column(3,
+                                                uiOutput("cf9v")),
+                                         column(3,
+                                                uiOutput("cf10v")),
+                                         column(3,
+                                                uiOutput("cf11v")),
+                                         column(3,
+                                                uiOutput("cf12v"))
+                                       ),
+                                       fluidRow(
+                                         column(3,
+                                                uiOutput("cf13v")),
+                                         column(3,
+                                                uiOutput("cf14v")),
+                                         column(3,
+                                                uiOutput("cf15v")),
+                                         column(3,
+                                                uiOutput("cf16v"))
+                                       ),
+                                       fluidRow(
+                                         column(3,
+                                                uiOutput("cf17v")),
+                                         column(3,
+                                                uiOutput("cf18v")),
+                                         column(3,
+                                                uiOutput("cf19v")),
+                                         column(3,
+                                                uiOutput("cf20v"))
+                                       )),
+                                     hr(),
+                                     wellPanel(
+                                       actionButton("calc","Calculate"),
+                                       hr(),
+                                       verbatimTextOutput("PV"),
+                                       verbatimTextOutput("npv"),
+                                       verbatimTextOutput("irr")))
+                 ),
+                 tabPanel("Convert currencies",
+                          column(4,
+                                 numericInput("value1", "Value", value=1),
+                                 textInput("inpu", "Input"),
+                                 textInput("outpu", "Output"),
+                                 actionButton("go","Go"),
+                                 hr(),
+                                 verbatimTextOutput("resultado"))
+                 ),
+                 tabPanel("Assets, Currencies, Commodities",
+                          fluidRow(
+                            column(4,
+                                   textInput("cur2", "Asset, Currency or Commodity"),
+                                   dateInput("di", "Data inicial", value = as.Date("2007-07-07")),
+                                   dateInput("dfi", "Data final", value = Sys.Date()),
+                                   actionButton("g1", "Plot"),
+                                   actionButton("g2", "DataTable"),
+                                   actionButton("reset", "Reset"),
+                                   hr(),
+                                   textOutput("growth")
+                            ),
+                            column(8, plotOutput("plot"))
+                          ),
+                          hr(),
+                          fluidRow(
+                            column(12,
+                                   dataTableOutput("table"))
+                          ))
+)
+
+
+##############################################################################################
+#### S #### S #### S #### S #### S #### S #### S #### S #### S #### S #### S #### S #### S ### 
+##############################################################################################
+
+
+server <- function(input, output) {
+  
+  vf   <- reactiveValues(data = NULL)
+  j    <- reactiveValues(data = NULL)
+  p    <- reactiveValues(data = NULL)
+  vp   <- reactiveValues(data = NULL)
+  vpc  <- reactiveValues(data = NULL)
+  nv   <- reactiveValues(data = NULL)
+  irr  <- reactiveValues(data = NULL)
+  nvv  <- reactiveValues(data = NULL)
+  irrv <- reactiveValues(data = NULL)
+  d <- reactiveValues(data = NULL)
+  acc <- reactiveValues(data = NULL)
+  a <- reactiveValues(h = NULL)
+  
+  ###########################        Basics      ##############################
+  ###########################     Future Value   ##############################
+  
+  
+  observeEvent(input$go1, {
+    
+    if(input$ki1 == "Compostos"){
+      vf$data <- round((input$c11)*(1 + (input$jur1))^(input$per1), 2)
+    } else {
+      vf$data <- round((input$c11) + (input$c11)*(input$jur1)*(input$per1), 2)
+    }
+  })
+  
+  output$r1 <- renderText({
+    paste("Valor Futuro:", vf$data)
+  })
+  
+  
+  ###########################     Basics     ##############################
+  ###########################     Juros      ##############################
+  
+  
+  observeEvent(input$go2, {
+    if(input$ki2 == "Compostos"){
+      j$data <- round(((input$vf2/input$c12)^(1/input$per2) - 1)*100, 2)
+    } else {
+      j$data <- round((((input$vf2 - input$c12)/input$c12)/input$per2)*100, 2)
+    } 
+    
+  })
+  
+  output$r2 <- renderText({
+    paste("Juros:", j$data, "%")
+  })
+  
+  
+  ###########################     Basics    ##############################
+  ###########################    Período    ##############################
+  
+  
+  observeEvent(input$go3, {
+    if(input$ki3 == "Compostos"){
+      p$data <- round(log(input$vf3/input$c13)/log(1+input$jur3), 2)
+    } else {
+      p$data <- round((input$vf3 - input$c13)/(input$jur3*input$c13), 2)
+    }
+    
+  })
+  
+  output$r3 <- renderText({
+    paste("Período:", p$data)
+  })
+  
+  
+  ###########################        Basics       ##############################
+  ###########################    Present Value    ##############################
+  
+  
+  observeEvent(input$go4, {
+    if(input$ki4 == "Compostos"){
+      vp$data <- round(input$vf4/((1+input$jur4)^input$per4), 2)
+    } else {
+      vp$data <- round(input$vf4/(1 + (input$jur4)*(input$per4)), 2)
+    }
+  }) 
+  
+  output$r4 <- renderText({ 
+    paste("Valor Presente:", vp$data)
+  })
+  
+  
+  ###########################        INTERMEDIARY        ##############################
+  ###########################         NPV & IRR          ##############################
+  
+  
+  #Ui for both 
+  output$cf1v <- renderUI({
+    if (input$period > 0){
+      numericInput("cfv1", label = "c1", value = 0)
+    }
+    
+  })
+  
+  output$cf2v <- renderUI({
+    if (input$period > 1){
+      numericInput("cfv2", label = "c2", value = 0)
+    }
+    
+  })
+  
+  output$cf3v <- renderUI({
+    if (input$period > 2){
+      numericInput("cfv3", label = "c3", value = 0)
+    }
+    
+  })
+  
+  output$cf4v <- renderUI({
+    if (input$period > 3){
+      numericInput("cfv4", label = "c4", value = 0)
+    }
+    
+  })
+  
+  output$cf5v <- renderUI({
+    if (input$period > 4){
+      numericInput("cfv5", label = "c5", value = 0)
+    }
+    
+  })
+  
+  output$cf6v <- renderUI({
+    if (input$period > 5){
+      numericInput("cfv6", label = "c6", value = 0)
+    }
+    
+  })
+  
+  output$cf7v <- renderUI({
+    if (input$period > 6){
+      numericInput("cfv7", label = "c7", value = 0)
+    }
+    
+  })
+  
+  output$cf8v <- renderUI({
+    if (input$period > 7){
+      numericInput("cfv8", label = "c8", value = 0)
+    }
+    
+  })
+  
+  output$cf9v <- renderUI({
+    if (input$period > 8){
+      numericInput("cfv9", label = "c9", value = 0)
+    }
+    
+  })
+  
+  output$cf10v <- renderUI({
+    if (input$period > 9){
+      numericInput("cfv10", label = "c10", value = 0)
+    }
+    
+  })
+  
+  output$cf11v <- renderUI({
+    if (input$period > 10){
+      numericInput("cfv11", label = "c11", value = 0)
+    }
+    
+  })
+  
+  output$cf12v <- renderUI({
+    if (input$period > 11){
+      numericInput("cfv12", label = "c12", value = 0)
+    }
+    
+  })
+  
+  output$cf13v <- renderUI({
+    if (input$period > 12){
+      numericInput("cfv13", label = "c13", value = 0)
+    }
+    
+  })
+  
+  output$cf14v <- renderUI({
+    if (input$period > 13){
+      numericInput("cfv14", label = "c14", value = 0)
+    }
+    
+  })
+  
+  output$cf15v <- renderUI({
+    if (input$period > 14){
+      numericInput("cfv15", label = "c15", value = 0)
+    }
+    
+  })
+  
+  output$cf16v <- renderUI({
+    if (input$period > 15){
+      numericInput("cfv16", label = "c16", value = 0)
+    }
+    
+  })
+  
+  output$cf17v <- renderUI({
+    if (input$period > 16){
+      numericInput("cfv17", label = "c17", value = 0)
+    }
+    
+  })
+  
+  output$cf18v <- renderUI({
+    if (input$period > 17){
+      numericInput("cfv18", label = "c18", value = 0)
+    }
+    
+  })
+  
+  output$cf19v <- renderUI({
+    if (input$period > 18){
+      numericInput("cfv19", label = "c19", value = 0)
+    }
+    
+  })
+  
+  output$cf20v <- renderUI({
+    if (input$period > 19){
+      numericInput("cfv20", label = "c20", value = 0)
+    }
+    
+  })
+  #PV
+  output$PV <- renderText({
+    paste("PV:", npvvv() - input$c0v)
+  })
+  
+  #NPV
+  npvvv <- function(){
+    cf <- reactive({
+      c(input$c0v, input$cfv1, input$cfv2, input$cfv3, input$cfv4, input$cfv5, input$cfv6, input$cfv7, input$cfv8, input$cfv9, input$cfv10, input$cfv11, input$cfv12, input$cfv13, input$cfv14, input$cfv15, input$cfv16, input$cfv17, input$cfv18, input$cfv19, input$cfv20)[1:(input$period+1)]
+    })
+    
+    df.q <- reactive({
+      c(1, (1+input$jv)^1, (1+input$jv)^2, (1+input$jv)^3, (1+input$jv)^4, (1+input$jv)^5,  (1+input$jv)^6, (1+input$jv)^7, (1+input$jv)^8, (1+input$jv)^9, (1+input$jv)^10, (1+input$jv)^11, (1+input$jv)^12, (1+input$jv)^13, (1+input$jv)^14, (1+input$jv)^15, (1+input$jv)^16, (1+input$jv)^17, (1+input$jv)^18, (1+input$jv)^19, (1+input$jv)^20)[1:(input$period+1)]
+    })
+    
+    
+    b <- reactive({
+      as.numeric(cf())/as.numeric(df.q())
+    })
+    
+    d <- eventReactive(input$calc, {
+      sum(as.data.frame(b()))
+    })
+    
+    round(d(),2)
+  }
+  output$npv <- renderText({
+    paste("NPV:", npvvv())
+  })
+  
+  #IRR
+  irrvv <- function(){
+    g <- function(x){
+      cf <- reactive({
+        c(input$c0v, input$cfv1, input$cfv2, input$cfv3, input$cfv4, input$cfv5, input$cfv6, input$cfv7, input$cfv8, input$cfv9, input$cfv10, input$cfv11, input$cfv12, input$cfv13, input$cfv14, input$cfv15, input$cfv16, input$cfv17, input$cfv18, input$cfv19, input$cfv20)[1:(input$period+1)]
+      })
+      
+      df.q <- reactive({
+        c(1, (1+x)^1, (1+x)^2, (1+x)^3, (1+x)^4, (1+x)^5,  (1+x)^6, (1+x)^7, (1+x)^8, (1+x)^9, (1+x)^10, (1+x)^11, (1+x)^12, (1+x)^13, (1+x)^14, (1+x)^15, (1+x)^16, (1+x)^17, (1+x)^18, (1+x)^19, (1+x)^20)[1:(input$period+1)]
+      })
+      
+      b <- reactive({
+        as.numeric(cf())/as.numeric(df.q())
+      })
+      
+      d <- eventReactive(input$calc, {
+        sum(as.data.frame(b()))
+      })
+      
+      d()
+    }
+    
+    new.raph1 <- function(error = 1e-9, x0 = 0, rep.t = 1000){
+      h = 1e-9
+      i = 1
+      rp = rep(0, rep.t)
+      x1 = x0
+      while (i <= rep.t) {
+        dg.dx = (g(x0 + h) - g(x0))/h
+        x1 = (x0 - (g(x0) / dg.dx))
+        rp[i] = x1
+        i = i + 1
+        if (abs(x1 - x0) < error) 
+          break
+        x0 = x1
+      }
+      return(rp[1 : (i-1)])
+    }
+    
+    data <- new.raph1(x0 = 0)
+    round(data[length(data)]*100,2)
+  }
+  output$irr <- renderText({
+    paste("IRR:", irrvv(), "%")
+  })
+  
+  ################################# CONVERSOR ################################
+  ################################# CONVERSOR ################################
+  observeEvent(input$go, {
+    a$h <- getSymbols(input$inpu, auto.assign = FALSE)
+    a$c <- getSymbols(input$outpu, auto.assign = FALSE)
+    a$b <- data.frame(a$c)[nrow(a$c), ncol(a$c)]*(input$value1)/data.frame(a$h)[nrow(a$h), ncol(a$h)]
+  })
+  
+  output$resultado <- renderText({
+    paste(round(as.numeric(a$b), 2))
+  }) 
+  ################################# ASSETS, CURRENCIES ################################
+  ################################# ASSETS, CURRENCIES ################################
+  
+  observeEvent(input$g1,{
+    acc$data <-  getSymbols(input$cur2, from = input$di, to = input$dfi, auto.assign = FALSE)
+  })
+  
+  observeEvent(input$g2, {
+    acc$data <-  getSymbols(input$cur2, from = input$di, to = input$dfi, auto.assign = FALSE)
+    acc$data2 <- acc$data
+    acc$t    <-  paste("If you had bought this asset in the initial date, you would have had a return of:", 
+                       round((as.numeric((data.frame(acc$data)[nrow(acc$data), ncol(acc$data)]))/
+                                as.numeric((data.frame(acc$data)[1, ncol(acc$data)])) - 1)*100, 2), "%.", "(disregarding the inflation rate)"
+    )
+  })
+  
+  observeEvent(input$reset, {
+    acc$data  <- NULL
+    acc$data2 <- NULL
+    acc$t <- NULL
+  })
+  
+  output$plot <- renderPlot({
+    candleChart(acc$data, name= input$cur2)
+  })
+  
+  output$table <- renderDataTable({
+    acc$data2
+  })
+  
+  output$growth <- renderText({
+    paste(acc$t)
+  })
+  
+}
+
+shinyApp(ui, server)
