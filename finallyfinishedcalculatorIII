@@ -201,7 +201,18 @@ ui <- navbarPage("BASIC FINANCE APP", #navbar permite uma navegação mais intui
                                  textInput("outpu", "Output"),
                                  actionButton("go","Go"),
                                  hr(),
-                                 verbatimTextOutput("resultado"))
+                                 verbatimTextOutput("resultado")),
+                          column(8,
+                                 p("The conversion of monetary values is pretty straight-
+                                  forward: it is used to see how much of a currency you
+                                  would have in hands if you had to exchange yours for  
+                                  another foreign currency."), p("To make a conversion in this app, you need to know the symbols used in Yahoo Finance of
+                                  both currencies related to the dollar.
+                                  As an example, to convert a certain quantity of the brazilian real to japanese yen you have to 
+                                  write 'BRL=X' in the Input box, and 'USDJPY=X' in the Output box."),
+                                 p("Below, I give you the list of the most important currencies in the world with its respective symbols:"),
+                                 tableOutput("currencies")
+                                )
                  ),
                  tabPanel("Assets, Currencies, Commodities",
                           fluidRow(
@@ -538,6 +549,14 @@ server <- function(input, output) {
   
   ################################# CONVERSOR ################################
   ################################# CONVERSOR ################################
+  matr <- c("1- U.S. Dollar:USD=X", "2- European Euro:EUR=X", "3- Japanese Yen:JPY=X", "4- British Pound:GBP=X", "5- Australian Dollar:AUD=X",
+            "6- Canadian Dollar:CAD=X", "7- Swiss Franc:CHF=X", "8- Chinese Yuan:CNY=X", "9- Swedish Krona:SEK=X", "10- Mexican Peso:MXN=X", "11- New Zealand Dollar:NZD=X",
+            "12- Singapore Dollar:SGD=X", "13- Hong Kong Dollar:HKD=X", "14- Norwegian krone:NOK=X",
+            "15- South Korean Won:KRW=X", "16- Turkish lira:TRY=X", "17- Indian Rupee:INR=X", "18- Russian Ruble:RUB=X", "19- Brazilian Real:BRL=X", "20- South African Rand:ZAR=X")
+  matr <- matrix(matr, ncol = 4)
+  
+  output$currencies <- renderTable({matr},include.rownames = FALSE,include.colnames = FALSE)
+  
   observeEvent(input$go, {
     a$h <- getSymbols(input$inpu, auto.assign = FALSE)
     a$c <- getSymbols(input$outpu, auto.assign = FALSE)
@@ -559,7 +578,7 @@ server <- function(input, output) {
     acc$data2 <- acc$data
     acc$t    <-  paste("If you had bought this asset in the initial date, you would have had a return of:", 
                        round((as.numeric((data.frame(acc$data)[nrow(acc$data), ncol(acc$data)]))/
-                                as.numeric((data.frame(acc$data)[1, ncol(acc$data)])) - 1)*100, 2), "%.", "(disregarding the inflation rate)"
+                                as.numeric((data.frame(acc$data)[1, ncol(acc$data)])) - 1)*100, 2), " %.", "(disregarding the inflation rate)"
     )
   })
   
