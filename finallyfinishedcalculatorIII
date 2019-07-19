@@ -570,7 +570,6 @@ server <- function(input, output) {
       h = 1e-9
       i = 1
       rp = rep(0, rep.t)
-      x1 = x0
       while (i <= rep.t) {
         dg.dx = (g(x0 + h) - g(x0))/h
         x1 = (x0 - (g(x0) / dg.dx))
