@@ -17,79 +17,111 @@ ui <- navbarPage("BASIC FINANCE APP", #navbar permite uma navegação mais intui
                                        fluidRow(
                                          column(
                                            4,
-                                           numericInput("c11",  label = div("Capital Inicial", 
+                                           numericInput("c11",  label = div("Initial Capital", 
                                                                             class = "text-warning"), 
                                                         value = 100),
-                                           numericInput("jur1", label = div("Taxa de juros ao ano",
+                                           numericInput("jur1", label = div("Interest Rate",
                                                                             class = "text-danger"),
                                                         value = 0.1),
-                                           numericInput("per1", label = div("Período", 
+                                           numericInput("per1", label = div("Period", 
                                                                             class = "text-info"),
                                                         value = 1),
-                                           selectInput("ki1", "Tipo de Juros",
-                                                       list("--","Compostos", "Simples"))
+                                           selectInput("ki1", "Kind of interest",
+                                                       list("Compound", "Simple")),
+                                           actionButton("go1", "Calculate")
+                                         ),
+                                         column(
+                                           8,
+                                           p("One of the most important concepts of modern finance is the interest rate. As an example,
+it is ","responsible"," to the modification in the value of money through the passage of time, and it may be too
+the principal paramter in investment decisions."),
+                                           p("Using it can become tremendously fuzzy, but the most simple way to learn it is practicing its application
+with simple present or future value problems."),
+                                           p("The present value is the value you have on hands, with which you have a certain purchasing power.
+Future value is how much today's money will value in some point in the future, given a certain interest rate."),
+                                           p("This section is responsable to show you the future value, the value your money today will worth.")
                                          )
                                        )
                                      ),
-                                     hr(),
-                                     actionButton("go1", "Calculate"),
+                                     hr(),  
                                      wellPanel(
                                        verbatimTextOutput("r1")
                                      )
                             ),
-                            tabPanel(div("Juros",
+                            tabPanel(div("Interest",
                                          class ="text-danger"),
                                      wellPanel(
                                        fluidRow(
                                          column(
                                            4,
-                                           numericInput("c12",  label = div("Capital Inicial", 
+                                           numericInput("c12",  label = div("Initial Capital", 
                                                                             class = "text-warning"), 
                                                         value = 100),
                                            numericInput("vf2", label = div("Future Value",
                                                                            class= "text-success"),
                                                         value = 110),
-                                           numericInput("per2", label = div("Período", 
+                                           numericInput("per2", label = div("Period", 
                                                                             class = "text-info"),
                                                         value = 1),
-                                           selectInput("ki2", "Tipo de Juros",
-                                                       list("--","Compostos", "Simples"))
+                                           selectInput("ki2", "Kind of interest",
+                                                       list("Compound", "Simple")),
+                                           actionButton("go2", "Calculate")
                                            
+                                         ),
+                                         column(
+                                           8,
+                                           p("One of the most important concepts of modern finance is the interest rate. As an example,
+it is ","responsible"," to the modification in the value of money through the passage of time, and it may be too
+the principal paramter in investment decisions."),
+                                           p("Using it can become tremendously fuzzy, but the most simple way to learn it is practicing its application
+with simple present or future value problems."),
+                                           p("The present value is the value you have on hands, with which you have a certain purchasing power.
+Future value is how much today's money will value in some point in the future, given a certain interest rate."),
+                                           p("This section is responsable to find you the correct interest rate with which you need to apply your initial capital to get to a desired future value, within a certain lenght of time.")
                                          )
                                        )
                                      ),
                                      hr(),
-                                     actionButton("go2", "Calculate"),
                                      wellPanel(verbatimTextOutput("r2")
                                      )
                             ),
-                            tabPanel(div("Período", 
+                            tabPanel(div("Period", 
                                          class = "text-info"),
                                      wellPanel(
                                        fluidRow(
                                          column(
                                            4,
-                                           numericInput("c13",  label = div("Capital Inicial", 
+                                           numericInput("c13",  label = div("Initial Capital", 
                                                                             class = "text-warning"), 
                                                         value = 100),
                                            numericInput("vf3", label = div("Future Value",
                                                                            class= "text-success"),
                                                         value = 110),
-                                           numericInput("jur3", label = div("Taxa de juros ao ano",
+                                           numericInput("jur3", label = div("Interest Rate",
                                                                             class = "text-danger"),
                                                         value = 0.1),
-                                           selectInput("ki3", "Tipo de Juros",
-                                                       list("--","Compostos", "Simples")
-                                           )
+                                           selectInput("ki3", "Kind of interest",
+                                                       list("Compound", "Simple")),
+                                           actionButton("go3", "Calculate")
+                                         ),
+                                         column(
+                                           8,
+                                           p("One of the most important concepts of modern finance is the interest rate. As an example,
+it is ","responsible"," to the modification in the value of money through the passage of time, and it may be too
+the principal paramter in investment decisions."),
+                                           p("Using it can become tremendously fuzzy, but the most simple way to learn it is practicing its application
+with simple present or future value problems."),
+                                           p("The present value is the value you have on hands, with which you have a certain purchasing power.
+Future value is how much today's money will value in some point in the future, given a certain interest rate."),
+                                           p("This section is responsable to find you the correct period of time with which you need to apply your initial capital to get to a desired future value, given a certain interest rate.")
                                          )
                                        )
                                      ),
                                      hr(),
-                                     actionButton("go3", "Calculate"),
                                      wellPanel(verbatimTextOutput("r3")
                                      )
                             ),
-                            tabPanel(div("Capital Inicial", 
+                            tabPanel(div("Initial Capital", 
                                          class = "text-warning"),
                                      wellPanel(
                                        fluidRow(
@@ -98,21 +130,32 @@ ui <- navbarPage("BASIC FINANCE APP", #navbar permite uma navegação mais intui
                                            numericInput("vf4", label = div("Future Value",
                                                                            class= "text-success"),
                                                         value = 110),
-                                           numericInput("jur4", label = div("Taxa de juros ao ano",
+                                           numericInput("jur4", label = div("Interest Rate",
                                                                             class ="text-danger"), 
                                                         value = 0.1),
-                                           numericInput("per4", label = div("Período", 
+                                           numericInput("per4", label = div("Period", 
                                                                             class = "text-info"),
                                                         value = 1),
-                                           selectInput("ki4", "Tipo de Juros",
-                                                       list("--","Compostos", "Simples")
-                                           )
+                                           selectInput("ki4", "Kind of interest",
+                                                       list("Compound", "Simple")
+                                           ),
+                                           actionButton("go4", "Calculate")
+                                         ),
+                                         column(
+                                           8,
+                                           p("One of the most important concepts of modern finance is the interest rate. As an example,
+it is ","responsible"," to the modification in the value of money through the passage of time, and it may be too
+the principal paramter in investment decisions."),
+                                           p("Using it can become tremendously fuzzy, but the most simple way to learn it is practicing its application
+with simple present or future value problems."),
+                                           p("The present value is the value you have on hands, with which you have a certain purchasing power.
+Future value is how much today's money will value in some point in the future, given a certain interest rate."),
+                                           p("This section is responsable to show you the most simple kind of valuation: discount a future value with a interest rate applied in only one period of time. It basically shows you how much a single cash flow in the future values today.")
                                          )
                                        )
                                        
                                      ),
                                      hr(),
-                                     actionButton("go4", "Calculate"),
                                      wellPanel(verbatimTextOutput("r4")
                                      )
                             )
@@ -121,19 +164,19 @@ ui <- navbarPage("BASIC FINANCE APP", #navbar permite uma navegação mais intui
                             tabPanel(div("NPV & IRR", class= "text-success"),
                                      wellPanel(
                                        fluidRow(
-                                         column(3, 
+                                         column(4,
                                                 numericInput(
                                                   "period", "Number of periods", 
-                                                  value = 5, min = 1, max = 20))
-                                       ),
-                                       fluidRow(
-                                         column(3,
-                                                numericInput("jv" , "Interest"  , value=0.1), offset = 0)
-                                       ),
-                                       fluidRow(
-                                         column(3,
-                                                numericInput("c0v" , "c0" , value=0), offset = 0)
-                                       )),
+                                                  value = 5, min = 1, max = 20),
+                                                numericInput("jv" , "Interest"  , value=0.1),
+                                                numericInput("c0v" , "c0" , value=0)
+                                         ),
+                                         column(8,
+                                                p("Both of the next concepts are not easy to understand only with the following definition, then to find more information and examples, you can look out in the links bellow."),
+                                                p("Net present value", a(href = "https://www.investopedia.com/terms/n/npv.asp", "(NPV)", class = "text-info"), "is the difference between the present value of cash inflows and the present value of cash outflows over a period of time."),
+                                                p("The internal rate of return", a(href = "https://www.investopedia.com/terms/i/irr.asp", "(IRR)", class = "text-info"), "is a metric used in capital budgeting to estimate the profitability of potential investments.")
+                                         ))
+                                     ),
                                      hr(),
                                      wellPanel(
                                        fluidRow(
@@ -212,7 +255,7 @@ ui <- navbarPage("BASIC FINANCE APP", #navbar permite uma navegação mais intui
                                   write 'BRL=X' in the Input box, and 'USDJPY=X' in the Output box."),
                                  p("Below, I give you the list of the most important currencies in the world with its respective symbols:"),
                                  tableOutput("currencies")
-                                )
+                          )
                  ),
                  tabPanel("Assets, Currencies, Commodities",
                           fluidRow(
@@ -270,7 +313,7 @@ server <- function(input, output) {
   })
   
   output$r1 <- renderText({
-    paste("Valor Futuro:", vf$data)
+    paste("Future Value:", vf$data)
   })
   
   
@@ -288,7 +331,7 @@ server <- function(input, output) {
   })
   
   output$r2 <- renderText({
-    paste("Juros:", j$data, "%")
+    paste("Interest Rate:", j$data, "%")
   })
   
   
@@ -306,7 +349,7 @@ server <- function(input, output) {
   })
   
   output$r3 <- renderText({
-    paste("Período:", p$data)
+    paste("Period:", p$data)
   })
   
   
@@ -323,7 +366,7 @@ server <- function(input, output) {
   }) 
   
   output$r4 <- renderText({ 
-    paste("Valor Presente:", vp$data)
+    paste("Present Value:", vp$data)
   })
   
   
